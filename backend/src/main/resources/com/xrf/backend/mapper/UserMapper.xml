@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xrf.backend.mapper.UserMapper">
+
+<!--    注册-->
+    <insert id="insert">
+        insert into users (username, password, gender, image, nickname, profile, role, create_time, update_time)
+        values (#{username}, #{password}, #{gender}, #{image},#{nickname}, #{profile}, #{role}, #{createTime}, #{updateTime})
+    </insert>
+
+    <select id="findByUsername" resultType="com.xrf.backend.pojo.User">
+        select * from users
+        <where>
+            username = #{username}
+        </where>
+        limit 1
+    </select>
+
+<!--    修改员工-->
+    <update id="updateUser">
+        update users
+        <set>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <if test="image != null">
+                image = #{image},
+            </if>
+            <if test="nickname != null and nickname != ''">
+                nickname = #{nickname},
+            </if>
+            <if test="profile != null">
+                profile = #{profile},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,38 @@
+# Frontend dependencies and build output
+frontend/node_modules/
+frontend/dist/
+
+# Backend build output
+backend/target/
+
+# IDE and editor files
+.idea/
+*.iml
+.vscode/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+!frontend/.env.demo
+!frontend/.env.real
+backend/src/main/resources/application-local.yaml
+backend/src/main/resources/application-prod.yaml
+
+# Logs and temporary files
+*.log
+logs/
+tmp/
+temp/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Java and frontend caches
+.classpath
+.project
+.settings/
+node_modules/
+target/
+dist/

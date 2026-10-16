@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xrf.backend.mapper.FavoriteMapper">
+
+    <!-- 查询当前用户收藏的公开笔记 -->
+    <select id="pageMyFavorites" resultType="com.xrf.backend.pojo.Note">
+        select note.*
+        from favorite_record
+                 inner join note on note.id = favorite_record.note_id
+        where favorite_record.user_id = #{userId}
+          and note.status = '已发布'
+        order by favorite_record.create_time desc
+    </select>
+
+</mapper>

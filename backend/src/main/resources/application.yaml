@@ -1,0 +1,47 @@
+server:
+  servlet:
+    context-path: /campus-api
+
+spring:
+  # 连接数据库
+  application:
+    name: backend
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:campus}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+  # 上传文件大小限制
+  servlet:
+    multipart:
+      max-file-size: 5MB   # 配置单个文件上传大小限制
+      max-request-size: 5MB # 配置单个请求最大大小的限制（一次请求中是可以上传多个文件）
+
+
+
+# 配置 MyBatis 的运行行为
+mybatis:
+  mapper-locations: classpath*:com/xrf/backend/mapper/*.xml
+  type-aliases-package: com.xrf.backend.pojo
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+
+# 阿里云oss
+aliyun:
+  oss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    accessKeyId: ${OSS_ACCESS_KEY_ID}
+    accessKeySecret: ${OSS_ACCESS_KEY_SECRET}
+    bucketName: ${OSS_BUCKET_NAME:replace-me}
+
+# 开启spring事务管理日志
+logging:
+  level:
+    org.springframework.jdbc.support.JdbcTransactionManager: debug
+
+# 设置jwt密钥
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: 604800000

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xrf.backend.mapper.NoteMapper">
+
+<!--    用户笔记分页查询-->
+    <select id="list" resultType="com.xrf.backend.pojo.Note">
+        select * from note
+        <where>
+            <if test="userId != null">
+                user_id = #{userId}
+                and status = '已发布'
+            </if>
+        </where>
+        order by updated_at desc
+    </select>
+
+<!--    全站笔记分页查询-->
+    <select id="allList" resultType="com.xrf.backend.pojo.Note">
+        select * from note
+        <where>
+            status = '已发布'
+            <if test="keyword != null and keyword != ''">
+                and (
+                title like concat('%' , #{keyword} , '%')
+                or summary like concat('%', #{keyword}, '%')
+                or context like concat('%', #{keyword}, '%')
+                )
+            </if>
+        </where>
+        order by updated_at desc
+    </select>
+
+<!--    创建笔记-->
+    <insert id="createNoteByUserId" useGeneratedKeys="true" keyProperty="id">
+        insert into note (user_id, title, summary, context, status)
+        values (#{userId}, #{title}, #{summary}, #{context}, #{status})
+    </insert>
+
+<!--    由笔记id（唯一）编辑笔记-->
+    <update id="updateNoteByNoteId" keyProperty="id">
+        update note
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="summary != null">
+                summary = #{summary},
+            </if>
+            <if test="context != null">
+                context = #{context},
+            </if>
+        </set>
+        where id = #{id} and user_id = #{userId}
+    </update>
+
+    <!-- 批量删除当前用户的笔记 -->
+    <delete id="deleteNotes">
+        delete from note
+        where user_id = #{userId}
+        and id in
+        <foreach collection="noteIds" item="noteId" separator="," open="(" close=")">
+            #{noteId}
+        </foreach>
+    </delete>
+
+    <!-- 查询当前用户实际拥有的笔记 ID -->
+    <select id="listOwnedNoteIds" resultType="java.lang.Integer">
+        select id
+        from note
+        where user_id = #{userId}
+          and id in
+        <foreach collection="noteIds" item="noteId" separator="," open="(" close=")">
+            #{noteId}
+        </foreach>
+    </select>
+
+    <!-- 删除笔记关联评论 -->
+    <delete id="deleteNoteComments">
+        delete from comment
+        where note_id in
+        <foreach collection="noteIds" item="noteId" separator="," open="(" close=")">
+            #{noteId}
+        </foreach>
+    </delete>
+
+    <!-- 删除笔记关联图片 -->
+    <delete id="deleteNoteImages">
+        delete from note_image
+        where note_id in
+        <foreach collection="noteIds" item="noteId" separator="," open="(" close=")">
+            #{noteId}
+        </foreach>
+    </delete>
+
+<!--    删除笔记关联点赞-->
+    <delete id="deleteNoteLikes">
+        delete from like_record where note_id in
+        <foreach collection="noteIds" item="noteId" separator="," open="(" close=")">
+            #{noteId}
+        </foreach>
+    </delete>
+
+<!--    删除笔记关联收藏-->
+    <delete id="deleteNoteFavorites">
+        delete from favorite_record where note_id in
+        <foreach collection="noteIds" item="noteId" separator="," open="(" close=")">
+            #{noteId}
+        </foreach>
+    </delete>
+
+<!--    admin删除笔记-->
+    <delete id="adminDeleteNote">
+        delete from note where id = #{noteId}
+    </delete>
+
+</mapper>

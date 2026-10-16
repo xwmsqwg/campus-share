@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xrf.backend.mapper.CommentMapper">
+
+    <!-- 查询评论 -->
+    <select id="getComByNoteId" resultType="com.xrf.backend.pojo.Comment">
+        select c.id,
+        c.note_id,
+        c.user_id,
+        c.content,
+        c.status,
+        c.create_time,
+        c.updated_at,
+        u.nickname,
+        u.image
+        from comment c
+        left join users u on c.user_id = u.id
+        <where>
+            <if test="noteId != null">
+                and c.note_id = #{noteId}
+            </if>
+            and c.status = '正常'
+        </where>
+        order by c.create_time desc
+    </select>
+
+    <!-- 新增评论 -->
+    <insert id="postCom" useGeneratedKeys="true" keyProperty="id">
+        insert into comment
+            (user_id, note_id, status, content, create_time, updated_at)
+        values (#{userId}, #{noteId}, #{status}, #{content}, #{createTime}, #{updatedAt})
+    </insert>
+
+    <!--admin删除评论-->
+    <update id="deleteByAdmin">
+        update comment
+        <set>
+            status = '删除',
+            updated_at = now()
+        </set>
+        where id = #{commentId}
+        and status = '正常'
+    </update>
+
+    <!-- user删除评论-->
+    <update id="deleteByUser">
+        update comment
+        <set>
+            status = '删除',
+            updated_at = now()
+        </set>
+        where id = #{commentId}
+        and user_id = #{userId}
+        and status = '正常'
+    </update>
+
+    <select id="getByComId" resultType="com.xrf.backend.pojo.Comment">
+        select c.id,
+               c.note_id,
+               c.user_id,
+               c.content,
+               c.status,
+               c.create_time,
+               c.updated_at,
+               u.nickname,
+               u.image
+        from comment c
+                 left join users u on c.user_id = u.id
+        where c.id = #{commentId}
+    </select>
+
+</mapper>

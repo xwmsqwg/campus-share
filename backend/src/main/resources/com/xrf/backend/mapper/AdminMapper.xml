@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xrf.backend.mapper.AdminMapper">
+
+<!--    查询所有笔记-->
+    <select id="listAllNotes" resultType="com.xrf.backend.pojo.Note">
+        select * from note
+        <where>
+            <if test="keyword != null and keyword != ''">
+                and (
+                    title like concat('%', #{keyword}, '%')
+                    or summary like concat('%', #{keyword}, '%')
+                    or context like concat('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+        order by updated_at desc
+    </select>
+
+<!--    用户总数-->
+    <select id="countUsers" resultType="long">
+        select count(*)
+        from users
+    </select>
+
+<!--    笔记总数-->
+    <select id="countNotes" resultType="long">
+        select count(*)
+        from note
+    </select>
+
+<!--     已发布笔记数量 -->
+    <select id="countPublishedNotes" resultType="long">
+        select count(*)
+        from note
+        where status = '已发布'
+    </select>
+
+<!--    评论总数-->
+    <select id="countComments" resultType="long">
+        select count(*)
+        from comment
+    </select>
+
+<!--     点赞记录总数 -->
+    <select id="countLikes" resultType="long">
+        select count(*)
+        from like_record
+    </select>
+
+<!--     收藏记录总数 -->
+    <select id="countFavorites" resultType="long">
+        select count(*)
+        from favorite_record
+    </select>
+
+</mapper>
